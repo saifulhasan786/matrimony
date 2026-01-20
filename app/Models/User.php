@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'gender',
+        'date_of_birth',
+        'status',
+        'profile_completed',
     ];
 
     /**
@@ -40,5 +45,54 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'date_of_birth' => 'date',
+        'profile_completed' => 'boolean',
     ];
+
+    // Relationships
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function partnerPreference()
+    {
+        return $this->hasOne(PartnerPreference::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(Photo::class);
+    }
+
+    public function sentInterests()
+    {
+        return $this->hasMany(Interest::class, 'sender_id');
+    }
+
+    public function receivedInterests()
+    {
+        return $this->hasMany(Interest::class, 'receiver_id');
+    }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)->where('status', 'active')->latest();
+    }
 }
+
